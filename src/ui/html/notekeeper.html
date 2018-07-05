@@ -1,0 +1,187 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Notekeeper - Backup For Your Brain</title>
+
+    <!--
+        Add these lines BEFORE and AFTER importing jquery.js (Works for both browser and electron)
+        https://stackoverflow.com/questions/32621988/electron-jquery-is-not-defined
+        https://github.com/electron/electron/issues/254#issuecomment-183483641
+    -->
+    <script>if (typeof module === 'object') { window.module = module; module = undefined; }</script>
+    <script src="../../../node_modules/jquery/dist/jquery.js"></script>
+    <script>if (window.module) module = window.module;</script>
+
+    <!-- Library css and js files -->
+    <link href="../../../node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <script src="../../../node_modules/bootstrap/dist/js/bootstrap.js"></script>
+
+    <link href="../../../node_modules/quill/dist/quill.snow.css" rel="stylesheet">
+    <link href="../../../node_modules/quill/dist/quill.bubble.css" rel="stylesheet">
+    <link href="../../../node_modules/quill/dist/quill.core.css" rel="stylesheet">
+    <script src="../../../node_modules/quill/dist/quill.core.js"></script>
+    <script src="../../../node_modules/quill/dist/quill.js"></script>
+
+    <link href="../../../node_modules/bootstrap-tagsinput/dist/bootstrap-tagsinput.css" rel="stylesheet">
+    <script src="../../../node_modules/bootstrap-tagsinput/dist/bootstrap-tagsinput.js"></script>
+
+    <link href="../../../node_modules/bootstrap-treeview/dist/bootstrap-treeview.min.css" rel="stylesheet">
+    <script src="../../../node_modules/bootstrap-treeview/dist/bootstrap-treeview.min.js"></script>
+
+    <!-- Custom css and js files -->
+    <script src="../js/treeview-manager/explore-notebooks-treeview-manager.js"></script>
+    <script src="../js/treeview-manager/explore-notepages-treeview-manager.js"></script>
+    <script src="../js/treeview-manager/recent-notes-treeview-manager.js"></script>
+    <script src="../js/treeview-manager/search-notes-treeview-manager.js"></script>
+    <script src="../js/server-manager.js"></script>
+
+    <link href="../css/quill-editor.css" rel="stylesheet">
+    <script src="../js/quill-editor.js"></script>
+
+    <link href="../css/bootstrap.css" rel="stylesheet">
+    <link href="../css/bootstrap-tagsinput.css" rel="stylesheet">
+    <link href="../css/bootstrap-treeview.css" rel="stylesheet">
+
+    <link href="../css/notekeeper-pagelayout.css" rel="stylesheet">
+    <script src="../js/notekeeper-pagelayout.js"></script>
+
+    <script>
+    </script>
+
+    <style>
+    </style>
+
+</head>
+
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Notekeeper</a>
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-section" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-collapse-section">
+                <form class="navbar-form navbar-left form-inline">
+                    <button class="btn glyphicon glyphicon-floppy-disk" type="button" id="is-notes-edited-button" disabled></button>
+                    <button class="btn glyphicon glyphicon-pencil" type="button" id="is-editing-enabled-button" onclick="QuillEditor.instance.toggleState_isEditingEnabled()"></button>
+                    <button class="btn glyphicon glyphicon-film" type="button" id="is-video-enabled-button" onclick="QuillEditor.instance.toggleState_isVideoEnabled()"></button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div id="main-section">
+        <div id="left-panel">
+            <div class="tabbable tabs-left">
+                <ul id="left-panel-tab-header" class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#explore-notebooks" data-toggle="tab">
+                            <span class="glyphicon glyphicon-book"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#recent-notes" data-toggle="tab">
+                            <span class="glyphicon glyphicon-time"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#search-notes" data-toggle="tab">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </a>
+                    </li>
+                </ul>
+                <div id="explore-notebooks-tab-content" class="tab-content">
+                    <div class="tab-pane active" id="explore-notebooks">
+                        <div id="explore-notebooks-treeview-controller">
+                            <button class="btn btn-primary glyphicon glyphicon-plus" type="button" id="create-child-notebook" onclick="ExploreNotebooksTreeviewManager.instance.createNotebook()"></button>
+                            <button class="btn btn-primary glyphicon glyphicon-minus" type="button" id="delete-notebook" onclick="ExploreNotebooksTreeviewManager.instance.deleteNotebook()"></button>
+                            <button class="btn btn-primary glyphicon glyphicon-resize-small" type="button" id="collapse-notebook-treeview" onclick="ExploreNotebooksTreeviewManager.instance.setExpansionForAllNotebooks(false)"></button>
+                            <button class="btn btn-primary glyphicon glyphicon-resize-full" type="button" id="expand-notebook-treeview" onclick="ExploreNotebooksTreeviewManager.instance.setExpansionForAllNotebooks(true)"></button>
+                        </div>
+                        <div id="explore-notebooks-treeview-scroller" class="treeview-scroller">
+                            <div id="explore-notebooks-treeview">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="recent-notes">
+                        <div id="recent-notes-treeview-scroller" class="treeview-scroller">
+                            <div id="recent-notes-treeview">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="search-notes">
+                        <div id="search-notes-treeview-controller">
+                            <input type="text" class="form-control" placeholder="Search here..." id="search-notes-textbox">
+                            <button class="btn btn-primary glyphicon glyphicon-search form-control" type="button" id="search-notes-button" onclick="SearchNotesTreeviewManager.instance.reloadTreeviewData()"></button>
+                        </div>
+                        <div id="search-notes-treeview-scroller" class="treeview-scroller">
+                            <div id="search-notes-treeview">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="middle-panel">
+            <!-- Left resize handle -->
+            <div id="left-resize-handle"></div>
+
+            <div id="explore-notepages">
+                <div id="explore-notepages-controller">
+                    <button class="btn btn-primary glyphicon glyphicon-plus" type="button" id="create-child-notepage" onclick="ExploreNotepagesTreeviewManager.instance.createNotepage()"></button>
+                    <button class="btn btn-primary glyphicon glyphicon-minus" type="button" id="delete-notepage" onclick="ExploreNotepagesTreeviewManager.instance.deleteNotepage()"></button>
+                    <button class="btn btn-primary glyphicon glyphicon-resize-small" type="button" id="collapse-notepage-treeview" onclick="ExploreNotepagesTreeviewManager.instance.setExpansionForAllNotepages(false)"></button>
+                    <button class="btn btn-primary glyphicon glyphicon-resize-full" type="button" id="expand-notepage-treeview" onclick="ExploreNotepagesTreeviewManager.instance.setExpansionForAllNotepages(true)"></button>
+                </div>
+                <div id="explore-notepages-treeview-scroller" class="treeview-scroller">
+                    <div id="explore-notepages-treeview">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="right-panel">
+            <!-- Right resize handle -->
+            <div id="right-resize-handle"></div>
+
+            <div id="notes-editor-div">
+                <div id="notes-metadata-editor-div">
+                    <input id="title-editor" type="text" class="form-control" placeholder="Enter title here...">
+                    <input id="tags-editor" type="text" class="form-control" data-role="tagsinput" placeholder="Enter tags here...">
+                    <input id="source-editor" type="text" class="form-control" placeholder="Enter source here...">
+                </div>
+                <div id="notes-content-editor-div">
+                    <div id="quill-editor"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // initialize singleton instances on page load
+        $(function () {
+            // initialize the editor
+            QuillEditor.initialize();
+
+            // initialize the (data) managers
+            ExploreNotepagesTreeviewManager.initialize();
+            ExploreNotebooksTreeviewManager.initialize();
+            RecentNotesTreeviewManager.initialize();
+            SearchNotesTreeviewManager.initialize();
+            ServerManager.initialize();
+
+            // initialize the PageLayout
+            PageLayout.initialize();
+
+            // load data to notebook and notepage explorers
+            ExploreNotebooksTreeviewManager.instance.reloadTreeviewData(false);
+        });
+    </script>
+</body>
+
+</html>
