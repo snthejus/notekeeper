@@ -1,0 +1,8 @@
+.DS_Store
+src/ui/images
+tmp
+node_modules
+dist
+notekeeper.config
+notekeeper.log
+notekeeper-*.tgz
