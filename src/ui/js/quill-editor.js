@@ -154,7 +154,7 @@ class QuillEditor {
     this.isNotesEditedButton = $('#is-notes-edited-button');
     // to enable/disable notes editing (switch between read-only and read-write modes)
     this.isEditingEnabledButton = $('#is-editing-enabled-button');
-    this.isEditingEnabled = false;
+    this.isEditingEnabled = true;
     // to enable/disable videos
     this.isVideoEnabledButton = $('#is-video-enabled-button');
     this.isVideoEnabled = true;
@@ -442,7 +442,7 @@ class QuillEditor {
     console.info('Toggled isEditingEnabled to ' + this.isEditingEnabled);
 
     if (this.isEditingEnabled) {
-      this.isEditingEnabledButton.addClass('active');
+      this.isEditingEnabledButton.removeClass('active');
 
       this.titleEditor.prop('disabled', false);
       this.tagsEditor.prop('disabled', false);
@@ -450,7 +450,7 @@ class QuillEditor {
       this.quillEditor.enable(true);
 
     } else {
-      this.isEditingEnabledButton.removeClass('active');
+      this.isEditingEnabledButton.addClass('active');
 
       this.titleEditor.prop('disabled', true);
       this.tagsEditor.prop('disabled', true);

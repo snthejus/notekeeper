@@ -10,11 +10,11 @@
 
 #is-editing-enabled-button {
     background: white;
-    color: red;
+    color: green;
     outline: none;
 }
 #is-editing-enabled-button.active {
-    color: green;
+    color: red;
 }
 
 #is-video-enabled-button {
