@@ -11,24 +11,53 @@ class AppPreferences {
         let appPreferences;
 
         if (!AppPreferences.doesPreferencesFileExist()) {
-            let notespaceDirectoryPath = dialog.showOpenDialog({ properties: ['openDirectory'] });
-
-            if (notespaceDirectoryPath) {
-                appPreferences = new AppPreferences();
-                appPreferences.notespaceDirectory = notespaceDirectoryPath[0];
-
-                AppPreferences.writeToFile(appPreferences);
-
-            } else {
-                logger.error('Failed to load App preferences. User has not selected an empty notespace directory.');
-                throw 'You need to select an empty notespace directory';
+            let notespaceDirectory = null;
+            // cannot proceed without a valid preference file
+            while (!notespaceDirectory) {
+                notespaceDirectory = AppPreferences.selectNotespaceDirectory();
             }
+
+            appPreferences = new AppPreferences();
+            appPreferences.notespaceDirectory = notespaceDirectory;
+            AppPreferences.writeToFile(appPreferences);
 
         } else {
             appPreferences = AppPreferences.readFromFile();
         }
 
         return appPreferences;
+    }
+
+    static selectNotespaceDirectory() {
+        let notespaceDirectory = null;
+        let notespaceDirectoryPath = dialog.showOpenDialog({
+            title: 'Open an existing Notespace (or) Select an empty directory to create a new Notespace',
+            // MacOS - Message to display above input boxes
+            message: 'Open an existing Notespace (or) Select an empty directory to create a new Notespace',
+            // Contains which features the dialog should use
+            properties: [
+                'openDirectory', // Open existing directory
+                'createDirectory' // MacOS - Allow creating new directories from dialog
+            ]
+        });
+
+        if (notespaceDirectoryPath && notespaceDirectoryPath[0]) {
+            notespaceDirectory = notespaceDirectoryPath[0];
+
+            if (!fs.existsSync(notespaceDirectory) || !fs.lstatSync(notespaceDirectory).isDirectory()) {
+                logger.info('In AppPreferences. Cannot find the directory. Failed to create new Notespace.');
+                dialog.showErrorBox('Failed to create/load Notespace', 'Cannot find the directory ' + notespaceDirectory);
+                notespaceDirectory = null;
+
+            } else if (!fs.existsSync(notespaceDirectory + '/notespace.json') && // Notespace does not exist
+                fs.readdirSync(notespaceDirectory).length > 0) { // Directory not empty
+                logger.info('In AppPreferences. Cannot create new Notespace as the directory is not empty');
+                dialog.showErrorBox('Failed to create Notespace', 'The directory ' + notespaceDirectory + ' is not empty');
+                notespaceDirectory = null;
+            }
+        }
+
+        return notespaceDirectory;
     }
 
     constructor() {

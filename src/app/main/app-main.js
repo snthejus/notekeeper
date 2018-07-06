@@ -1,13 +1,18 @@
+const { dialog } = require('electron');
+
 const { logger } = require('../utils/logger');
 const { Notespace } = require('../datanodes/notespace');
 const { AppPreferences } = require('./app-preferences');
 
 class AppMain {
     static initialize() {
-        AppMain.instance = new AppMain();
-
-        // To debug the unit-test failure
-        // VideoURLParser.getVideoURL('https://www.youtube.com/watch?v=ZihEgF-sBvI', 'watch');
+        try {
+            AppMain.instance = new AppMain();
+        } catch (e) {
+            logger.error('In AppMain. Error while initializing AppMain.', e);
+            dialog.showErrorBox('Failed to initialize', 'Please try restarting the app');
+            throw e;
+        }
     }
 
     constructor() {
