@@ -5,7 +5,7 @@ class Constants {
 // Declare static constant values
 
 // App version
-Constants.APP_DATA_VERSION = '1.0';
+Constants.APP_DATA_VERSION = '1.0.0';
 
 // Debug/Prod build
 Constants.IS_DEBUG_BUILD = false;
