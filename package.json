@@ -20,7 +20,7 @@
     "log4js": "2.5.3"
   },
   "devDependencies": {
-    "electron": "1.7.8",
+    "electron": "2.0.4",
     "electron-builder": "20.0.6"
   },
   "build": {
