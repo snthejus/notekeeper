@@ -302,15 +302,13 @@ class Notespace {
 
     getSearchNotesTreeviewData(searchText) {
         let treeviewData = [];
-        let score = 0.0;
-
         if (searchText) {
             let searchWords = searchText.toLowerCase().match(Constants.WORD_SPLIT_REGEX);
+            logger.debug('Searching notespace for words: ' + searchWords);
 
             if (searchWords) {
                 for (let notebook of this.rootNotebooks) {
-                    // treeviewData gets populated on successful search
-                    notebook.searchText(searchWords, treeviewData, score);
+                    notebook.searchText(searchWords, treeviewData, 0.0);
                 }
             }
         }

@@ -224,49 +224,59 @@ class Notepage {
         return true; // notepage successfully deleted
     }
 
+    getScoreForSectionMatch(searchWord, sectionText, baseScoreForSection) {
+        let score = 0.0;
+        if (sectionText.toLowerCase().indexOf(searchWord) != -1) {
+            // add baseScoreForSection for match
+            score += baseScoreForSection;
+
+            let searchRegex = new RegExp('\\b' + searchWord + '\\b', 'ig')
+            // add 10X baseScoreForSection for EACH of exact match (word boundary)
+            let exactMatchList = sectionText.match(searchRegex);
+            if (exactMatchList) {
+                score += 10.0 * baseScoreForSection * exactMatchList.length;
+            }
+        }
+
+        return score;
+    }
+
     /*
      * Search data (for left panel)
      */
     searchText(searchWords, treeviewData, parentScore) {
         let score = 0.0;
         if (parentScore > 0.0) {
-            score = 1.0 / parentScore;
+            score += Math.log10(1.0 + parentScore);
         }
 
-        let contentText = StringUtils.getTextFromHTML(this.content);
+        let contentText = StringUtils.getContentTextFromHTML(this.content);
+        let hyperlinkText = StringUtils.getHyperlinkTextFromHTML(this.content);
 
-        for (let word of searchWords) {
-            if (this.title.toLowerCase().indexOf(word) != -1) {
-                score += 1.0;
-            }
-            if (this.tags.toLowerCase().indexOf(word) != -1) {
-                score += 0.8;
-            }
-            if (this.source.toLowerCase().indexOf(word) != -1) {
-                score += 0.7;
-            }
-            // TODO Use TF-IDF
-            if (contentText.toLowerCase().indexOf(word) != -1) {
-                score += 0.9;
-            }
+        for (let searchWord of searchWords) {
+            score += this.getScoreForSectionMatch(searchWord, this.title, 1.0);
+            score += this.getScoreForSectionMatch(searchWord, this.tags, 1.0);
+            score += this.getScoreForSectionMatch(searchWord, this.source, 1.0);
+            score += this.getScoreForSectionMatch(searchWord, contentText, 0.5);
+            score += this.getScoreForSectionMatch(searchWord, hyperlinkText, 0.5);
+        }
 
-            if (score > 0.0) {
-                let nodeData = {
-                    text: this.title,
-                    notepageId: this.notepageId,
-                    notebookId: this.notebook.notebookId,
-                    score: score
-                };
+        if (score > 0.0) {
+            let nodeData = {
+                text: this.title,
+                notepageId: this.notepageId,
+                notebookId: this.notebook.notebookId,
+                score: score
+            };
 
-                let index = 0;
-                for (index = 0; index < treeviewData.length; index++) {
-                    if (treeviewData[index].score < score) {
-                        break;
-                    }
+            let index = 0;
+            for (index = 0; index < treeviewData.length; index++) {
+                if (treeviewData[index].score < score) {
+                    break;
                 }
-
-                treeviewData.splice(index, 0, nodeData);
             }
+
+            treeviewData.splice(index, 0, nodeData);
         }
 
         for (let childNotepage of this.notepages) {
@@ -277,7 +287,7 @@ class Notepage {
     searchTag(searchTag, treeviewData, parentScore) {
         let score = 0.0;
         if (parentScore > 0.0) {
-            score = 1.0 / parentScore;
+            score += Math.log10(1.0 + parentScore);
         }
 
         // this.tags is csv separated values

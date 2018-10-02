@@ -264,25 +264,36 @@ class Notebook {
         return true; // notebook successfully deleted
     }
 
+    getScoreForSectionMatch(searchWord, sectionText, baseScoreForSection) {
+        let score = 0.0;
+        if (sectionText.toLowerCase().indexOf(searchWord) != -1) {
+            // add baseScoreForSection for match
+            score += baseScoreForSection;
+
+            let searchRegex = new RegExp('\\b' + searchWord + '\\b', 'ig')
+            // add 10X baseScoreForSection for EACH of exact match (word boundary)
+            let exactMatchList = sectionText.match(searchRegex);
+            if (exactMatchList) {
+                score += 10.0 * baseScoreForSection * exactMatchList.length;
+            }
+        }
+
+        return score;
+    }
+
     /*
      * Search data (for left panel)
      */
     searchText(searchWords, treeviewData, parentScore) {
         let score = 0.0;
         if (parentScore > 0.0) {
-            score = 1.0 / parentScore;
+            score += Math.log10(1.0 + parentScore);
         }
 
-        for (let word of searchWords) {
-            if (this.title.toLowerCase().indexOf(word) != -1) {
-                score += 1.0;
-            }
-            if (this.tags.toLowerCase().indexOf(word) != -1) {
-                score += 0.8;
-            }
-            if (this.source.toLowerCase().indexOf(word) != -1) {
-                score += 0.7;
-            }
+        for (let searchWord of searchWords) {
+            score += this.getScoreForSectionMatch(searchWord, this.title, 1.0);
+            score += this.getScoreForSectionMatch(searchWord, this.tags, 1.0);
+            score += this.getScoreForSectionMatch(searchWord, this.source, 1.0);
         }
 
         for (let childNotepage of this.notepages) {
@@ -296,7 +307,7 @@ class Notebook {
     searchTag(searchTag, treeviewData, parentScore) {
         let score = 0.0;
         if (parentScore > 0.0) {
-            score = 1.0 / parentScore;
+            score += Math.log10(1.0 + parentScore);
         }
 
         // this.tags is csv separated values
