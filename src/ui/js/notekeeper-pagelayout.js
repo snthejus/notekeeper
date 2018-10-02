@@ -79,10 +79,16 @@ class PageLayout {
         this.searchNotesTreeviewController = $('#search-notes-treeview-controller');
         this.searchNotesTreeviewScroller = $('#search-notes-treeview-scroller');
 
+        this.leftResizeHandleOffset = 0;
+        this.rightResizeHandleOffset = 0;
         this.isLeftResizing = false;
         this.isRightResizing = false;
         this.leftResizeRatio = 0.25; /* 25% left-panel */
         this.rightResizeRatio = 0.55; /* 55% right-panel */
+
+        // to enable/disable fullscreen mode
+        this.isFullscreenModeEnabledButton = $('#is-fullscreen-mode-enabled-button');
+        this.isFullscreenModeEnabled = false;
     }
 
     static onLeftResizeMouseDown() {
@@ -101,6 +107,11 @@ class PageLayout {
 
     static onMouseMove(e) {
         let pl = PageLayout.instance;
+
+        if (!(pl.isLeftResizing || pl.isRightResizing)) {
+            // we don't want to do anything if we aren't resizing.
+            return;
+        }
 
         let mainSectionWidth = pl.mainSection.width();
         let mainSectionOffsetLeft = pl.mainSection.offset().left;
@@ -132,13 +143,13 @@ class PageLayout {
         let mainSectionOffsetLeft = pl.mainSection.offset().left;
         let mainSectionOffsetRight = pl.mainSection.offset().left + pl.mainSection.width();
 
-        let leftResizeHandleOffset = Math.floor(pl.leftResizeRatio * mainSectionWidth) + mainSectionOffsetLeft;
-        let rightResizeHandleOffset = mainSectionOffsetRight - Math.floor(pl.rightResizeRatio * mainSectionWidth);
+        pl.leftResizeHandleOffset = Math.floor(pl.leftResizeRatio * mainSectionWidth) + mainSectionOffsetLeft;
+        pl.rightResizeHandleOffset = mainSectionOffsetRight - Math.floor(pl.rightResizeRatio * mainSectionWidth);
 
-        pl.leftPanel.css('right', mainSectionWidth - leftResizeHandleOffset);
-        pl.middlePanel.css('left', leftResizeHandleOffset);
-        pl.middlePanel.css('right', mainSectionWidth - rightResizeHandleOffset);
-        pl.rightPanel.css('left', rightResizeHandleOffset);
+        pl.leftPanel.css('right', mainSectionWidth - pl.leftResizeHandleOffset);
+        pl.middlePanel.css('left', pl.leftResizeHandleOffset);
+        pl.middlePanel.css('right', mainSectionWidth - pl.rightResizeHandleOffset);
+        pl.rightPanel.css('left', pl.rightResizeHandleOffset);
 
         let quillEditorHeight = parseInt(pl.notesEditorSection.height() //
             - pl.titleEditor.outerHeight() - pl.tagsEditor.outerHeight() //
@@ -175,5 +186,34 @@ class PageLayout {
 
         pl.searchNotesSection.width(leftPanelTreeviewWidth);
         pl.searchNotesTreeviewScroller.height(searchNotesTreeviewScrollerHeight);
+
+        // If fullscreen mode is enabled
+        if (pl.isFullscreenModeEnabled) {
+            pl.rightPanel.css('left', 0);
+        }
+    }
+
+    toggleState_isFullscreenModeEnabled() {
+        let pl = PageLayout.instance;
+
+        pl.isFullscreenModeEnabled = !pl.isFullscreenModeEnabled;
+        console.info('Toggled isFullscreenModeEnabled to ' + pl.isFullscreenModeEnabled);
+
+        if (pl.isFullscreenModeEnabled) {
+            pl.isFullscreenModeEnabledButton.addClass('active');
+
+            pl.leftPanel.css('display', 'none');
+            pl.middlePanel.css('display', 'none');
+            pl.rightResizeHandle.css('display', 'none');
+            pl.rightPanel.css('left', 0);
+
+        } else {
+            pl.isFullscreenModeEnabledButton.removeClass('active');
+
+            pl.leftPanel.css('display', 'block');
+            pl.middlePanel.css('display', 'block');
+            pl.rightResizeHandle.css('display', 'block');
+            pl.rightPanel.css('left', pl.rightResizeHandleOffset);
+        }
     }
 }

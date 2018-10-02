@@ -26,6 +26,15 @@
     color: red;
 }
 
+#is-fullscreen-mode-enabled-button {
+    background: white;
+    color: red;
+    outline: none;
+}
+#is-fullscreen-mode-enabled-button.active {
+    color: green;
+}
+
 #main-section {
     width: 100%;
     height: 100%;
