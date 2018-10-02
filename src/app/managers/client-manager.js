@@ -6,6 +6,7 @@ const { logger } = require('../utils/logger');
 const { NotespaceManager } = require('../managers/notespace-manager');
 const { NotebookManager } = require('../managers/notebook-manager');
 const { NotepageManager } = require('../managers/notepage-manager');
+const { TagsManager } = require('../managers/tags-manager');
 const { RecentNotesManager } = require('../managers/recent-notes-manager');
 const { SearchNotesManager } = require('../managers/search-notes-manager');
 
@@ -126,6 +127,22 @@ ipcMain.on('get-explore-notepages-treeview-data', (event, arg) => {
     return;
 });
 
+ipcMain.on('get-explore-notepages-treeview-data-for-tag-search', (event, arg) => {
+    try {
+        let requestData = JSON.parse(arg);
+        logger.debug('Received get-explore-notepages-treeview-data-for-tag-search request for with args: ' + JSON.stringify(requestData));
+        let responseData = NotepageManager.getNotepageTreeviewDataForTagSearch(requestData['searchTag']);
+        event.returnValue = responseData ? JSON.stringify(responseData) : '[]';
+
+    } catch (err) {
+        logger.error(err.message);
+        logger.info(err.stack);
+        event.returnValue = false;
+    }
+
+    return;
+});
+
 /*
  * Notebook related APIs
  */
@@ -232,6 +249,26 @@ ipcMain.on('get-explore-notebooks-treeview-data', (event, arg) => {
         let requestData = JSON.parse(arg);
         logger.debug('Received get-explore-notebooks-treeview-data request for with args: ' + JSON.stringify(requestData));
         let responseData = NotebookManager.getExploreNotebooksTreeviewData();
+        event.returnValue = responseData ? JSON.stringify(responseData) : '[]';
+
+    } catch (err) {
+        logger.error(err.message);
+        logger.info(err.stack);
+        event.returnValue = false;
+    }
+
+    return;
+});
+
+/*
+ * Tags related APIs
+ */
+
+ipcMain.on('get-explore-tags-treeview-data', (event, arg) => {
+    try {
+        let requestData = JSON.parse(arg);
+        logger.debug('Received get-explore-tags-treeview-data request for with args: ' + JSON.stringify(requestData));
+        let responseData = TagsManager.getExploreTagsTreeviewData();
         event.returnValue = responseData ? JSON.stringify(responseData) : '[]';
 
     } catch (err) {

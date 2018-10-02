@@ -66,6 +66,12 @@ class ServerManager {
         });
     }
 
+    getExploreNotepagesTreeviewDataForTagSearch(searchTag) {
+        return this.sendSync('get-explore-notepages-treeview-data-for-tag-search', {
+            'searchTag': searchTag
+        });
+    }
+
     /*
      * Notebook related APIs
      */
@@ -112,6 +118,14 @@ class ServerManager {
 
     getExploreNotebooksTreeviewData() {
         return this.sendSync('get-explore-notebooks-treeview-data', {
+        });
+    }
+
+    /*
+     * Tags related APIs
+     */
+    getExploreTagsTreeviewData() {
+        return this.sendSync('get-explore-tags-treeview-data', {
         });
     }
 

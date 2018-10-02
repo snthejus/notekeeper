@@ -127,3 +127,7 @@
 #search-notes-button {
     width: auto;
 }
+
+.treeview-controller {
+    margin-left: 3px;
+}

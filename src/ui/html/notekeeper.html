@@ -32,6 +32,7 @@
     <!-- Custom css and js files -->
     <script src="../js/treeview-manager/explore-notebooks-treeview-manager.js"></script>
     <script src="../js/treeview-manager/explore-notepages-treeview-manager.js"></script>
+    <script src="../js/treeview-manager/explore-tags-treeview-manager.js"></script>
     <script src="../js/treeview-manager/recent-notes-treeview-manager.js"></script>
     <script src="../js/treeview-manager/search-notes-treeview-manager.js"></script>
     <script src="../js/server-manager.js"></script>
@@ -87,6 +88,11 @@
                         </a>
                     </li>
                     <li>
+                        <a href="#explore-tags" data-toggle="tab">
+                            <span class="glyphicon glyphicon-tags"></span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="#recent-notes" data-toggle="tab">
                             <span class="glyphicon glyphicon-time"></span>
                         </a>
@@ -99,7 +105,7 @@
                 </ul>
                 <div id="explore-notebooks-tab-content" class="tab-content">
                     <div class="tab-pane active" id="explore-notebooks">
-                        <div id="explore-notebooks-treeview-controller">
+                        <div id="explore-notebooks-treeview-controller" class="treeview-controller">
                             <button class="btn btn-primary glyphicon glyphicon-plus" type="button" id="create-child-notebook" onclick="ExploreNotebooksTreeviewManager.instance.createNotebook()"></button>
                             <button class="btn btn-primary glyphicon glyphicon-minus" type="button" id="delete-notebook" onclick="ExploreNotebooksTreeviewManager.instance.deleteNotebook()"></button>
                             <button class="btn btn-primary glyphicon glyphicon-resize-small" type="button" id="collapse-notebook-treeview" onclick="ExploreNotebooksTreeviewManager.instance.setExpansionForAllNotebooks(false)"></button>
@@ -107,6 +113,16 @@
                         </div>
                         <div id="explore-notebooks-treeview-scroller" class="treeview-scroller">
                             <div id="explore-notebooks-treeview">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="explore-tags">
+                        <!-- Not required
+                        <div id="explore-tags-treeview-controller">
+                        </div>
+                        -->
+                        <div id="explore-tags-treeview-scroller" class="treeview-scroller">
+                            <div id="explore-tags-treeview">
                             </div>
                         </div>
                     </div>
@@ -134,7 +150,7 @@
             <div id="left-resize-handle"></div>
 
             <div id="explore-notepages">
-                <div id="explore-notepages-controller">
+                <div id="explore-notepages-treeview-controller" class="treeview-controller">
                     <button class="btn btn-primary glyphicon glyphicon-plus" type="button" id="create-child-notepage" onclick="ExploreNotepagesTreeviewManager.instance.createNotepage()"></button>
                     <button class="btn btn-primary glyphicon glyphicon-minus" type="button" id="delete-notepage" onclick="ExploreNotepagesTreeviewManager.instance.deleteNotepage()"></button>
                     <button class="btn btn-primary glyphicon glyphicon-resize-small" type="button" id="collapse-notepage-treeview" onclick="ExploreNotepagesTreeviewManager.instance.setExpansionForAllNotepages(false)"></button>
@@ -172,6 +188,7 @@
             // initialize the (data) managers
             ExploreNotepagesTreeviewManager.initialize();
             ExploreNotebooksTreeviewManager.initialize();
+            ExploreTagsTreeviewManager.initialize();
             RecentNotesTreeviewManager.initialize();
             SearchNotesTreeviewManager.initialize();
             ServerManager.initialize();

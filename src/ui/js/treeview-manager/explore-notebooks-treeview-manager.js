@@ -28,6 +28,7 @@ class ExploreNotebooksTreeviewManager {
 
     reloadTreeviewData(reloadContent) {
         let notebookTreeviewData = ServerManager.instance.getExploreNotebooksTreeviewData();
+
         if (notebookTreeviewData) {
             if (ExploreNotebooksTreeviewManager.instance.lastNotebookId) {
                 let treeviewNodes = JSON.parse(notebookTreeviewData);
@@ -50,6 +51,7 @@ class ExploreNotebooksTreeviewManager {
         }
 
         this.reload();
+        ExploreNotepagesTreeviewManager.instance.reloadTreeviewData(true);
     }
 
     reload() {

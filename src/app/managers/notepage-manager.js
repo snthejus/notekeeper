@@ -105,6 +105,10 @@ class NotepageManager {
 
         return notebook.getExploreNotepagesTreeviewData();
     }
+
+    static getNotepageTreeviewDataForTagSearch(searchTag) {
+        return AppMain.instance.notespace.getNotepageTreeviewDataForTagSearch(searchTag);
+    }
 }
 
 module.exports = {

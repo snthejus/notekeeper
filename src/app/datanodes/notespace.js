@@ -20,6 +20,7 @@ class Notespace {
 
         this.notebookCache = new Map();
         this.notepageCache = new Map();
+        this.tagsCache = new Set();
 
         this.readFromFile();
     }
@@ -222,6 +223,22 @@ class Notespace {
     }
 
     /*
+     * Tags Cache
+     */
+    addTagsToCache(csvTagList) {
+        if(csvTagList) {
+            var tags = csvTagList.split(',');
+            for(let tag of tags) {
+                this.tagsCache.add(tag);
+            }
+        }
+    }
+
+    clearTagsCache() {
+        this.tagsCache.clear();
+    }
+
+    /*
      * Recent Notepages
      */
     addRecentNotepage(notepage) {
@@ -257,6 +274,17 @@ class Notespace {
         return treeviewData;
     }
 
+    getExploreTagsTreeviewData() {
+        let sortedTagList = Array.from(this.tagsCache).sort();
+
+        let tagsTreevewData = [];
+        for (let tag of sortedTagList) {
+            tagsTreevewData.push({'text': tag});
+        }
+
+        return tagsTreevewData;
+    }
+
     getRecentNotesTreeviewData() {
         let treeviewData = [];
         for (let notepage of this.recentNotepages) {
@@ -284,6 +312,25 @@ class Notespace {
                     // treeviewData gets populated on successful search
                     notebook.searchText(searchWords, treeviewData, score);
                 }
+            }
+        }
+
+        return treeviewData;
+    }
+
+    /*
+     * Treeview data (for middle panel)
+     */
+    getNotepageTreeviewDataForTagSearch(searchTag) {
+        let treeviewData = [];
+        let score = 0.0;
+
+        // trim the search string first
+        let trimmedSearchTag = searchTag.trim();
+        if (trimmedSearchTag) {
+            for (let notebook of this.rootNotebooks) {
+                // treeviewData gets populated on successful search
+                notebook.searchTag(trimmedSearchTag, treeviewData, score);
             }
         }
 

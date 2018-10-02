@@ -27,13 +27,20 @@ class PageLayout {
 
             if (target == '#explore-notebooks') {
                 ExploreNotebooksTreeviewManager.instance.reloadTreeviewData(true);
+                PageLayout.instance.exploreNotepagesTreeviewController.css('display', 'block');
+
+            } else if (target == '#explore-tags') {
+                ExploreTagsTreeviewManager.instance.loadTagsData();
+                PageLayout.instance.exploreNotepagesTreeviewController.css('display', 'none');
 
             } else if (target == '#recent-notes') {
                 RecentNotesTreeviewManager.instance.reloadTreeviewData(true);
+                PageLayout.instance.exploreNotepagesTreeviewController.css('display', 'block');
 
             } else if (target == '#search-notes') {
                 // Do not reload treeview data. Just reload notes content.
                 SearchNotesTreeviewManager.instance.loadSeachNotesData();
+                PageLayout.instance.exploreNotepagesTreeviewController.css('display', 'block');
             }
         });
 
@@ -70,6 +77,9 @@ class PageLayout {
         this.exploreNotepagesSection = $('#explore-notepages');
         this.exploreNotepagesTreeviewController = $('#explore-notepages-treeview-controller');
         this.exploreNotepagesTreeviewScroller = $('#explore-notepages-treeview-scroller');
+
+        this.exploreTagsSection = $('#explore-tags');
+        this.exploreTagsTreeviewScroller = $('#explore-tags-treeview-scroller');
 
         this.recentNotesSection = $('#recent-notes');
         this.recentNotesTreeviewController = $('#recent-notes-treeview-controller');
@@ -168,6 +178,7 @@ class PageLayout {
             - (pl.exploreNotepagesTreeviewController.outerHeight() || 34)
         );
 
+        let exploreTagsTreeviewScrollerHeight = pl.leftPanel.height();
         let recentNotesTreeviewScrollerHeight = pl.leftPanel.height();
         let searchNotesTreeviewScrollerHeight = parseInt(pl.leftPanel.height() //
             // height of button is 34px
@@ -180,6 +191,9 @@ class PageLayout {
 
         pl.exploreNotepagesSection.width(middlePanelTreeviewWidth);
         pl.exploreNotepagesTreeviewScroller.height(exploreNotepagesTreeviewScrollerHeight);
+
+        pl.exploreTagsSection.width(leftPanelTreeviewWidth);
+        pl.exploreTagsTreeviewScroller.height(exploreTagsTreeviewScrollerHeight);
 
         pl.recentNotesSection.width(leftPanelTreeviewWidth);
         pl.recentNotesTreeviewScroller.height(recentNotesTreeviewScrollerHeight);

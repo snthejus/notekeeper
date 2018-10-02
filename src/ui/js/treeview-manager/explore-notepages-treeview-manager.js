@@ -57,6 +57,23 @@ class ExploreNotepagesTreeviewManager {
         this.reload();
     }
 
+    reloadTreeviewDataForTagSearch(searchTag) {
+        let notepageTreeviewData = null;
+
+        if (searchTag) {
+            notepageTreeviewData = ServerManager.instance.getExploreNotepagesTreeviewDataForTagSearch(searchTag);
+        }
+
+        if (notepageTreeviewData) {
+            this.treeviewData = notepageTreeviewData;
+        } else {
+            this.treeviewData = '[]';
+        }
+
+        this.resetNotepageData(false);
+        this.reload();
+    }
+
     reload() {
         this.treeview.treeview({
             color: "#428bca",
@@ -70,6 +87,9 @@ class ExploreNotepagesTreeviewManager {
                 console.debug('Notepage ' + node.notepageId + ' selected');
                 ExploreNotepagesTreeviewManager.instance.lastNotepageId = node.notepageId;
                 ExploreNotepagesTreeviewManager.instance.loadNotepageData();
+
+                // used when notepage is changed from search page
+                ExploreNotebooksTreeviewManager.instance.lastNotebookId = node.notebookId;
             },
 
             onNodeUnselected: function (event, node) {

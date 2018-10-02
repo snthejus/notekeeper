@@ -77,6 +77,9 @@ class Notepage {
 
         this.notepages = [];
 
+        // write tags info to cache
+        this.notespace.addTagsToCache(this.tags);
+
         for (let childNotepage of metadata.notepages) {
             if (this.notespace.doesNotepageExist(childNotepage)) {
                 let notepage = new Notepage(childNotepage, this, this.notebook);
@@ -109,6 +112,9 @@ class Notepage {
             'notepages': this.getChildNotepageIds()
         }
         let metadataStr = JSON.stringify(metadata);
+
+        // write tags info to cache
+        this.notespace.addTagsToCache(this.tags);
 
         let filepath = this.getNotepageDirectory() + '/notepage.json';
 
@@ -265,6 +271,43 @@ class Notepage {
 
         for (let childNotepage of this.notepages) {
             childNotepage.searchText(searchWords, treeviewData, score);
+        }
+    }
+
+    searchTag(searchTag, treeviewData, parentScore) {
+        let score = 0.0;
+        if (parentScore > 0.0) {
+            score = 1.0 / parentScore;
+        }
+
+        // this.tags is csv separated values
+        if (this.tags.indexOf(searchTag) != -1) {
+            // split the csv into array, and check for exact match
+            if (this.tags.split(',').includes(searchTag)) {
+                score += 1.0;
+            }
+        }
+
+        if (score > 0.0) {
+            let nodeData = {
+                text: this.title,
+                notepageId: this.notepageId,
+                notebookId: this.notebook.notebookId,
+                score: score
+            };
+
+            let index = 0;
+            for (index = 0; index < treeviewData.length; index++) {
+                if (treeviewData[index].score < score) {
+                    break;
+                }
+            }
+
+            treeviewData.splice(index, 0, nodeData);
+        }
+
+        for (let childNotepage of this.notepages) {
+            childNotepage.searchTag(searchTag, treeviewData, score);
         }
     }
 
