@@ -129,6 +129,11 @@ class ServerManager {
         });
     }
 
+    getTagsListForTypeahead() {
+        return this.sendSync('get-tags-list-for-typeahead', {
+        });
+    }
+
     /*
      * RecentNotes related APIs
      */

@@ -336,6 +336,14 @@ class Notespace {
 
         return treeviewData;
     }
+
+    /**
+     * Tag data
+     */
+    getTagsListForTypeahead() {
+        let sortedTagList = Array.from(this.tagsCache).sort();
+        return sortedTagList;
+    }
 }
 
 module.exports = {

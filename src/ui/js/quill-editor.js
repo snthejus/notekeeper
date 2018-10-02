@@ -145,6 +145,8 @@ class QuillEditor {
     QuillEditor.instance = new QuillEditor();
     // register event handlers
     QuillEditor.instance.registerHandlers();
+    // initialize typeahead for tags
+    QuillEditor.instance.initializeTagsTypeahead();
     // make sure to reset (disable) the editor until some notepage is selected
     QuillEditor.instance.reset();
   }
@@ -177,6 +179,8 @@ class QuillEditor {
     this.lastSavedTimestamp = null;
     this.lastLoadTimestamp = null;
     this.lastResetTimestamp = null;
+
+    this.tagsTypeaheadInitialized = false;
   }
 
   registerHandlers() {
@@ -204,6 +208,9 @@ class QuillEditor {
     this.tagsEditor.on('itemAdded', function (event) {
       if (QuillEditor.instance.isUserChange()) {
         QuillEditor.instance.sendDataToServer();
+
+        // re-initialize the typeahead for tags (as a new tag was added).
+        QuillEditor.instance.initializeTagsTypeahead();
       }
     });
 
@@ -248,6 +255,44 @@ class QuillEditor {
 
   getContent() {
     return this.quillEditor.root.innerHTML;
+  }
+
+  initializeTagsTypeahead() {
+    let tagListResponse = ServerManager.instance.getTagsListForTypeahead();
+    console.debug('Found tags: ' + tagListResponse);
+    let tagList = JSON.parse(tagListResponse);
+
+    if(!this.tagsTypeaheadInitialized) {
+      console.log('Initializing Typeahead for tagsinput with ' + tagList.length + ' tags.');
+      this.tagsTypeaheadInitialized = true;
+
+    } else {
+      console.log('(Reinitializing Typeahead for tagsinput with ' + tagList.length + ' tags.');
+      this.tagsEditor.tagsinput('destroy');
+    }
+
+    let tags = new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      local: $.map(tagList, function (tag) {
+        return {
+            name: tag
+        };
+      })
+    });
+    tags.initialize();
+
+    this.tagsEditor.tagsinput({
+      typeaheadjs: [{
+          minLength: 1,
+          highlight: true,
+        },{
+          name: 'tags',
+          displayKey: 'name',
+          valueKey: 'name',
+          source: tags.ttAdapter()
+        }]
+    });
   }
 
   load(notesId, notesType, title, tags, source, content) {

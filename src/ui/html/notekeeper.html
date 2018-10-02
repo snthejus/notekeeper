@@ -17,6 +17,8 @@
     <link href="../../../node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
     <script src="../../../node_modules/bootstrap/dist/js/bootstrap.js"></script>
 
+    <script src="../../../node_modules/typeahead.js/dist/typeahead.bundle.js"></script>
+
     <link href="../../../node_modules/quill/dist/quill.snow.css" rel="stylesheet">
     <link href="../../../node_modules/quill/dist/quill.bubble.css" rel="stylesheet">
     <link href="../../../node_modules/quill/dist/quill.core.css" rel="stylesheet">
@@ -169,8 +171,9 @@
             <div id="notes-editor-div">
                 <div id="notes-metadata-editor-div">
                     <input id="title-editor" type="text" class="form-control" placeholder="Enter title here...">
-                    <input id="tags-editor" type="text" class="form-control" data-role="tagsinput" placeholder="Enter tags here...">
+                    <input id="tags-editor" type="text" class="form-control" data-provide="typeahead" placeholder="Enter tags here...">
                     <input id="source-editor" type="text" class="form-control" placeholder="Enter source here...">
+
                 </div>
                 <div id="notes-content-editor-div">
                     <div id="quill-editor"></div>
@@ -182,6 +185,9 @@
     <script>
         // initialize singleton instances on page load
         $(function () {
+            // initialize the server manager
+            ServerManager.initialize();
+
             // initialize the editor
             QuillEditor.initialize();
 
@@ -191,7 +197,6 @@
             ExploreTagsTreeviewManager.initialize();
             RecentNotesTreeviewManager.initialize();
             SearchNotesTreeviewManager.initialize();
-            ServerManager.initialize();
 
             // initialize the PageLayout
             PageLayout.initialize();

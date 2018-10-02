@@ -5,6 +5,10 @@ class TagsManager {
     static getExploreTagsTreeviewData() {
         return AppMain.instance.notespace.getExploreTagsTreeviewData();
     }
+
+    static getTagsListForTypeahead() {
+        return AppMain.instance.notespace.getTagsListForTypeahead();
+    }
 }
 
 module.exports = {

@@ -17,7 +17,8 @@
     "bootstrap-tagsinput": "0.7.1",
     "jquery": "3.2.1",
     "bootstrap-treeview": "1.2.0",
-    "log4js": "2.5.3"
+    "log4js": "2.5.3",
+    "typeahead.js": "0.11.1"
   },
   "devDependencies": {
     "electron": "2.0.4",

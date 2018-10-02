@@ -280,6 +280,22 @@ ipcMain.on('get-explore-tags-treeview-data', (event, arg) => {
     return;
 });
 
+ipcMain.on('get-tags-list-for-typeahead', (event, arg) => {
+    try {
+        let requestData = JSON.parse(arg);
+        logger.debug('Received get-tags-list-for-typeahead request for with args: ' + JSON.stringify(requestData));
+        let responseData = TagsManager.getTagsListForTypeahead();
+        event.returnValue = responseData ? JSON.stringify(responseData) : '[]';
+
+    } catch (err) {
+        logger.error(err.message);
+        logger.info(err.stack);
+        event.returnValue = false;
+    }
+
+    return;
+});
+
 /*
  * RecentNotes related APIs
  */
